@@ -17,6 +17,7 @@ class CreateUserPaymentsTable extends Migration
             $table->bigIncrements('id');
             $table->integer('sender_id');
             $table->integer('recipint_id');
+            $table->integer('money_amount');
             $table->timestamps();
 
             $table->foreign('sender_id')->references('id')->on('users');
