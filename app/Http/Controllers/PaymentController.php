@@ -56,7 +56,7 @@ class PaymentController extends Controller
 
         // Сама платежка
         $payment = new UserPayment($this->sender_id, $this->recipint_id);
-        $payment->save();
+        $payment->savePayment();
 
         DB::commit();
 

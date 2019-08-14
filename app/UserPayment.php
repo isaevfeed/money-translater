@@ -25,7 +25,7 @@ class UserPayment extends Model
      * Проиводим перевод
      * @return bool|void
      */
-    public function save()
+    public function savePayment()
     {
         $payment = new UserPayment();
         $payment->sender = $this->sender;
