@@ -19,6 +19,8 @@ class PaymentController extends Controller
      */
     public function sendMoneyToUser(Request $request)
     {
+        $payment_id = 0;
+
         // Получаем даннные пользователей (от кого и кому), а также количество переводимых средств
         $this->sender_id = $request->input('sender_id');
         $this->recipint_id = $request->input('recipint_id');
@@ -28,7 +30,7 @@ class PaymentController extends Controller
         // чтобы контролировать процесс передачи денег и не потерять их в процессе
         try {
             // Сама транзакция
-            $this->paymentTransaction();
+            $payment_id = $this->paymentTransaction();
         } catch (\PDOException $e) {
             return response('Возникла ошибка во время операции.');
 
@@ -38,10 +40,13 @@ class PaymentController extends Controller
         return response()->json([
             "user_sender" => User::find($this->sender_id),
             "user_recipint" => User::find($this->recipint_id),
-            "amount" => UserPayment::find($payment->id)->amount
+            "amount" => UserPayment::find($payment_id)->amount
         ]);
     }
 
+    /**
+     * @return mixed
+     */
     private function paymentTransaction()
     {
         DB::beginTransaction();
@@ -54,8 +59,13 @@ class PaymentController extends Controller
         $payment->save();
 
         DB::commit();
+
+        return $payment->id;
     }
 
+    /**
+     * Изменяем количество денежных средств в кошельке пользователя
+     */
     private function changeAmountOfMoney()
     {
         $sender = UserWallet::find($this->sender_id);
